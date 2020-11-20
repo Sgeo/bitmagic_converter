@@ -22,6 +22,7 @@ fn main() {
     let ext = read_bm_string(&mut input_file);
     let name = read_bm_string(&mut input_file);
     let creator = read_bm_string(&mut input_file);
+    let edition: u32 = input_file.read_u32::<BigEndian>().expect("Unable to read edition!");
 
     input_file.seek(SeekFrom::Start(header_size.into())).expect("Unable to seek!");
     let mut output_file = File::create(format!("{}.{}", &filename, ext)).expect("Unable to create output file!");
@@ -29,6 +30,8 @@ fn main() {
 
     if let Some(metadata_filename) = metadata_filename_opt {
         let mut metadata_file = std::fs::OpenOptions::new().create(true).append(true).open(metadata_filename).expect("Unable to open metadata file!");
-        write!(metadata_file, "File: {}\nName: {}\nCreator: {}\n\n", &filename, &name, &creator);
+        write!(metadata_file, "File: {}\nName: {}\nCreator: {}\nEdition: {}\n\n", &filename, &name, &creator, &edition);
+    } else {
+        println!("File: {}\nName: {}\nCreator: {}\nEdition: {}\n\n", &filename, &name, &creator, &edition);
     }
 }
